@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1">
+		<meta name=viewport content="width=device-width,initial-scale=1,user-scalable=0">
+		<meta name=format-detection content="telephone=no,email=no">
+		<meta name=apple-mobile-web-app-capable content=yes>
+		<meta name=apple-touch-fullscreen content=yes>
+	</head>
+	<body>
+		<div id="text">
+			
+		</div>
+		<input type="text" name="" id="inputtx"  />
+		<button onclick="bb()" type="button">设置</button>
+		<button onclick="aa()" type="button">获取</button>
+		
+		<script>
+			function aa(){
+				var text=localStorage.getItem('xx');
+				document.getElementById("text").innerHTML=text;
+				
+			}
+			
+			function bb(){
+				var ipt=document.getElementById("inputtx").value;
+				console.log(ipt)
+				localStorage.setItem('xx', ipt);
+			}
+			
+			aa();
+			
+			
+			
+		</script>
+	</body>
+</html>

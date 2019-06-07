@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<script src="https://cdn.agora.io/sdk/web/AgoraRTCSDK-2.6.1.js"></script>
+		<title>慧医家互联网医院一对一语音Beta</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+		<meta name="format-detection" content="telephone=no,email=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-touch-fullscreen" content="yes">
+		<link rel="stylesheet" href="//manhattan.didistatic.com/static/manhattan/mand/pace.css">
+		<script src="//manhattan.didistatic.com/static/manhattan/mand/pace.js"></script>
+		<style type="text/css">
+			body{
+				text-align: center;
+			}
+			input{
+				width: 200px;
+				height: 30px;
+				border-radius: 15px;
+				border: 0px;
+				background: aliceblue;
+				margin: 0 auto;
+				margin-top: 200px;
+			}
+		</style>
+
+	</head>
+	<body>
+		<div id="agora_local">
+
+		</div>
+
+		<div id="agora_remote">
+
+		</div>
+		
+		<input  onclick="join()" type="button"  value="开始语音" />
+	</body>
+
+
+
+	<script language="javascript">
+		if (!AgoraRTC.checkSystemRequirements()) {
+			alert("Your browser does not support WebRTC!");
+		}
+
+		function join() {
+
+			var channelKey = null;
+			var channel = 'voiceDemoChannel1';
+			var uid = null;
+			var appid = '51a33c5821284d6eaeb5296613246695';
+
+
+			var client = AgoraRTC.createClient({
+				mode: 'live',
+				codec: "h264"
+			});
+			client.init(appid, function() {
+				client.join(channelKey, channel, uid, function(uid) {
+					console.log("User " + uid + " join channel successfully");
+
+					var localStream = AgoraRTC.createStream({
+						streamID: uid,
+						audio: true,
+						video: false,
+						screen: false
+					});
+
+					localStream.init(function() {
+						console.log("getUserMedia successfully");
+						localStream.play('agora_local');
+						
+						client.publish(localStream, function(err) {
+							console.log("Publish local stream error: " + err);
+						});
+						
+						client.on('stream-published', function(evt) {
+							console.log("Publish local stream successfully");
+						});
+
+					}, function(err) {
+						console.log("getUserMedia failed", err);
+					});
+
+
+					
+
+
+
+				}, function(err) {
+					console.log("Join channel failed", err);
+				});
+
+
+			}, function(err) {
+				console.log("AgoraRTC client init failed", err);
+			});
+
+
+			client.on('stream-added', function(evt) {
+				var stream = evt.stream;
+				console.log("New stream added: " + stream.getId());
+
+				client.subscribe(stream, function(err) {
+					console.log("Subscribe stream failed", err);
+				});
+			});
+
+
+
+			client.on('stream-subscribed', function(evt) {
+				var remoteStream = evt.stream;
+				console.log("Subscribe remote stream successfully: " + remoteStream.getId());
+				remoteStream.play('agora_remote');
+			})
+
+
+
+
+		}
+	</script>
+	</body>
+</html>
